@@ -113,6 +113,14 @@ export function getSkillDetailsFromWorkspace(context: vscode.ExtensionContext, l
   Logger.verbose(`Calling method: getSkillDetailsFromWorkspace`);
   const skillFolder = getSkillFolderInWs(context);
   if (skillFolder) {
+    // fsPath is not available in the skillFolder object in some cases, so we need to set it manually
+    if(!skillFolder.fsPath && skillFolder.path) {
+      let temp  = vscode.Uri.file(skillFolder.path);
+      // Find the fsPath from the new Uri object
+      let value = temp.fsPath
+      // @ts-ignore
+      skillFolder['fsPath'] = value ?? skillFolder.path; 
+    }
     const skillConfig = getAskResourceConfig(skillFolder.fsPath);
     const skillState = getAskState(skillFolder);
     const profile = Utils.getCachedProfile(context) ?? DEFAULT_PROFILE;
