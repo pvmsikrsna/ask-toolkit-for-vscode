@@ -31,7 +31,10 @@ export async function findSkillFoldersInWs(): Promise<vscode.Uri[]> {
   const askResources = await vscode.workspace.findFiles("**/ask-resources.json");
   const skillFolders: vscode.Uri[] = [];
   askResources.forEach((resourceFileUri) => {
-    skillFolders.push(vscode.Uri.file(path.dirname(resourceFileUri.fsPath)));
+    const dirname: string = path.dirname(resourceFileUri.fsPath);
+    const uri: vscode.Uri = vscode.Uri.file(dirname);
+    Logger.verbose("Uri", uri.fsPath);
+    skillFolders.push(uri);
   });
   return skillFolders;
 }
