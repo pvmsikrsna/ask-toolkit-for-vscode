@@ -130,6 +130,15 @@ export class DeployHostedSkillWebview extends AbstractWebView {
           throw new AskError("No skill folder found in the workspace");
         }
         this.skillRepo = this.gitApi.getRepository(skillFolder);
+        let repositoryInstance = this.gitApi.getRepository(skillFolder);
+        if (!repositoryInstance) {
+          let skillFolderUri = vscode.Uri.file(skillFolder.fsPath);
+          // Calling this.getRepository(skillFolder) returns null;
+          // With vscode.Uri.file(skillFolder.fsPath), it returns the correct repository
+          this.skillRepo = this.gitApi.getRepository(skillFolderUri);
+        } else {
+          this.skillRepo = repositoryInstance;
+        }
         if (this.skillRepo === null) {
           throw new AskError(
             "No skill repository found. Please make sure the skill exists in the Developer Console and download it again.",
@@ -241,11 +250,15 @@ export class DeployHostedSkillWebview extends AbstractWebView {
       if (skillFolder === undefined) {
         throw new AskError("No skill folder found in the workspace");
       }
-      let temp = vscode.Uri.file(skillFolder.fsPath);
-      // Calling this.getRepository(skillFolder) returns null;
-      let noRepository = this.gitApi.getRepository(skillFolder);
-      // With vscode.Uri.file(skillFolder.fsPath), it returns the correct repository
-      this.skillRepo = this.gitApi.getRepository(temp);
+      let repositoryInstance = this.gitApi.getRepository(skillFolder);
+      if(!repositoryInstance){
+      let skillFolderUri = vscode.Uri.file(skillFolder.fsPath);
+        // Calling this.getRepository(skillFolder) returns null;
+        // With vscode.Uri.file(skillFolder.fsPath), it returns the correct repository
+        this.skillRepo = this.gitApi.getRepository(skillFolderUri);
+      } else {
+        this.skillRepo = repositoryInstance;
+      }
       if (this.skillRepo === null) {
         throw new AskError("No skill repository found. Please make sure the skill exists in the Developer Console and download it again.");
       }
